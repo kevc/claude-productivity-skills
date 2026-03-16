@@ -1,0 +1,11 @@
+{
+  "accounts": {
+    "personal": {
+      "label": "Personal",
+      "email": "you@gmail.com",
+      "credentials_path": "~/.gmail_credentials_personal.json",
+      "token_path": "~/.gmail_token_personal.json"
+    }
+  },
+  "default_account": "personal"
+}

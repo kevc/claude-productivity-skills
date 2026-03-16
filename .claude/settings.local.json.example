@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__claude_ai_Gmail__gmail_search_messages",
+      "mcp__claude_ai_Gmail__gmail_read_message",
+      "mcp__gmail__gmail_search_messages",
+      "mcp__gmail__gmail_read_message",
+      "Bash(osascript *)",
+      "Bash(python3 *)",
+      "Bash(cat *)",
+      "Bash(wc -l *)",
+      "Bash(mkdir -p *)",
+      "Write(~/git/claude-productivity-skills/inbox/*)",
+      "WebSearch"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "gmail"
+  ]
+}

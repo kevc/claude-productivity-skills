@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Replace YOUR_USERNAME with your macOS username (i.e. the output of `whoami`) -->
+    <!-- Replace REPO_DIR with the full path to your clone of this repo -->
+
+    <key>Label</key>
+    <string>com.YOUR_USERNAME.email-triage</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/zsh</string>
+        <string>REPO_DIR/scripts/run-email-triage.sh</string>
+    </array>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>8</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>REPO_DIR/logs/email-triage.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>REPO_DIR/logs/email-triage-error.log</string>
+
+    <key>WorkingDirectory</key>
+    <string>REPO_DIR</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>
