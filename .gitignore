@@ -4,4 +4,8 @@ accounts.json
 .claude/settings.local.json
 __pycache__/
 *.pyc
+.DS_Store
+.env
+*.gmail_token*.json
+*.gmail_credentials*.json
 
