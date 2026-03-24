@@ -155,6 +155,22 @@ def archive_messages(service, message_ids: list, dry_run: bool = False):
     return archived
 
 
+def delete_messages(service, message_ids: list, dry_run: bool = False):
+    """Move messages to Trash."""
+    deleted = 0
+    for msg_id in message_ids:
+        if dry_run:
+            print(f"  [dry-run] would delete: {msg_id}")
+        else:
+            service.users().messages().trash(
+                userId="me",
+                id=msg_id,
+            ).execute()
+            print(f"  🗑️ deleted: {msg_id}")
+            deleted += 1
+    return deleted
+
+
 DEFAULT_BUCKETS = {"promotional_no_deal", "spam"}
 
 
@@ -176,6 +192,11 @@ def main():
         default="",
         help="Account slug from accounts.json (overrides digest metadata)",
     )
+    parser.add_argument(
+        "--delete",
+        action="store_true",
+        help="Permanently move messages to Trash instead of archiving (removing INBOX label)",
+    )
     args = parser.parse_args()
 
     digest_path = Path(args.digest)
@@ -194,16 +215,20 @@ def main():
     target_buckets = set(args.buckets) if args.buckets else DEFAULT_BUCKETS
     service = get_gmail_service(token_path, creds_path)
 
+    action_fn = delete_messages if args.delete else archive_messages
+    action_verb = "delete" if args.delete else "archive"
+    action_past = "deleted" if args.delete else "archived"
+
     total = 0
     for bucket in target_buckets:
         ids = all_buckets.get(bucket, [])
         if ids:
-            print(f"\nArchiving {len(ids)} emails from '{bucket}'...")
-            total += archive_messages(service, ids, dry_run=args.dry_run)
+            print(f"\n{action_verb.capitalize()}ing {len(ids)} emails from '{bucket}'...")
+            total += action_fn(service, ids, dry_run=args.dry_run)
         else:
-            print(f"\nNo emails to archive in '{bucket}'.")
+            print(f"\nNo emails to {action_verb} in '{bucket}'.")
 
-    action = "Would archive" if args.dry_run else "Archived"
+    action = f"Would {action_verb}" if args.dry_run else action_past.capitalize()
     print(f"\n{action} {total} emails total.")
 
 

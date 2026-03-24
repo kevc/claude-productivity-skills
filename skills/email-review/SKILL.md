@@ -59,29 +59,46 @@ After presenting, ask the user:
 
 Give them space to respond. If they reclassify anything, note it for the archive step. Don't re-read emails to re-argue a classification — trust the user's judgment.
 
-## Step 4: Archive confirmed emails
+## Step 4: Archive or delete confirmed emails
 
-Once the user confirms they're ready to clean up, summarize what will be archived:
+**Honor the user's exact word choice.** If they said "delete", use `--delete`. If they said "archive", don't use `--delete`. Never substitute one for the other.
 
-> "Archiving [N] promotional + [N] spam emails now..."
+- "delete" → moves to Trash (`--delete` flag)
+- "archive" → removes from inbox, still searchable (no flag)
 
-Then build the `--buckets` argument based on what the user confirmed:
+Only ask the user to clarify if they haven't specified. If they did specify, proceed directly without asking.
+
+If the user wants different actions for different buckets (e.g. delete spam, archive promotional), handle them in two separate script calls.
+
+Summarize before running:
+
+> "Deleting [N] spam, archiving [N] promotional now..."
+
+**Building the command(s):**
 - Always include `promotional_no_deal` and `spam` unless the user said to keep them
 - Add `other` if the user confirmed those are done
-- Add `must_read` or `deals` only if the user explicitly said to archive them
+- Add `must_read` or `deals` only if the user explicitly said to
+- Add `--delete` flag when the user wants permanent deletion (Trash) instead of archive
 
-Run the archive script via bash, using the correct path for the digest:
-
+Archive example:
 ```bash
 python3 ~/git/claude-productivity-skills/scripts/archive_emails.py inbox/personal/YYYY-MM-DD.md --buckets promotional_no_deal spam
 ```
 
-For legacy flat digests (no account subdirectory):
+Delete example:
 ```bash
-python3 ~/git/claude-productivity-skills/scripts/archive_emails.py inbox/YYYY-MM-DD.md --buckets promotional_no_deal spam
+python3 ~/git/claude-productivity-skills/scripts/archive_emails.py inbox/personal/YYYY-MM-DD.md --buckets spam --delete
 ```
 
-Adjust `--buckets` to match what the user confirmed. The archive script reads the `account:` line from the digest metadata to resolve credentials automatically. Report back how many emails were archived when the script completes.
+Mixed (delete spam, archive promotional — two calls):
+```bash
+python3 ~/git/claude-productivity-skills/scripts/archive_emails.py inbox/personal/YYYY-MM-DD.md --buckets spam --delete
+python3 ~/git/claude-productivity-skills/scripts/archive_emails.py inbox/personal/YYYY-MM-DD.md --buckets promotional_no_deal
+```
+
+For legacy flat digests (no account subdirectory), replace `inbox/personal/YYYY-MM-DD.md` with `inbox/YYYY-MM-DD.md`.
+
+The archive script reads the `account:` line from the digest metadata to resolve credentials automatically. Report back how many emails were archived/deleted when the script(s) complete.
 
 If the script fails with "No archive_ids block found", explain that the digest predates message ID tracking and they'll need to re-run triage to get a fresh digest.
 
